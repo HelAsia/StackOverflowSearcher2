@@ -1,4 +1,4 @@
-package com.example.asia.stackoverflowsearcher.model
+package com.example.asia.stackoverflowsearcher.data.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
