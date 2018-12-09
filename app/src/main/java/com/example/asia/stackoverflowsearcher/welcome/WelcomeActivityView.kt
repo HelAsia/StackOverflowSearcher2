@@ -1,7 +1,8 @@
-package com.example.asia.stackoverflowsearcher
+package com.example.asia.stackoverflowsearcher.welcome
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.example.asia.stackoverflowsearcher.R
 
 class WelcomeActivityView : AppCompatActivity() {
 
