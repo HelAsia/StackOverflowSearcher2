@@ -37,7 +37,7 @@ class QueryRepository : QueryRepositoryInterface {
                     listener?.onSuccess(queryResult?.items)
                 }else{
                     Log.i("onResponse(). error: ", "$queryResult")
-                    listener?.onError(queryResult?.errorMessage)
+                    listener?.onError(queryResult.errorMessage)
                 }
             }
 

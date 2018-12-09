@@ -16,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".search_with_results.SearchAndResultActivityView">
+        </activity>
     </application>
 
 </manifest>
