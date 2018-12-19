@@ -15,7 +15,7 @@ import com.example.asia.stackoverflowsearcher.R
 import com.example.asia.stackoverflowsearcher.data.model.Item
 import com.example.asia.stackoverflowsearcher.data.repositories.QueryRepository
 import com.example.asia.stackoverflowsearcher.details.WebViewActivity
-import com.example.asia.stackoverflowsearcher.licenses.LicensesActivityView
+import com.example.asia.stackoverflowsearcher.licenses.LicensesActivity
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_search_and_result_view.*
 
 import java.util.concurrent.TimeUnit
 
-class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract.View{
+class SearchAndResultActivity : AppCompatActivity(), SearchAndResultContract.View{
     private val presenter: SearchAndResultContract.Presenter? =
         SearchAndResultPresenter(this, QueryRepository())
     private var context: Context? = null
@@ -112,10 +112,10 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
         fragmentTransaction.commit()
     }
 
-    override fun getFragmentWithArgs(url: String?): ResultDetailsFragmentView {
+    override fun getFragmentWithArgs(url: String?): ResultDetailsFragment {
         val data = Bundle()
         data.putString("url", url)
-        val resultDetailsFragmentView = ResultDetailsFragmentView()
+        val resultDetailsFragmentView = ResultDetailsFragment()
         resultDetailsFragmentView.arguments = data
         return resultDetailsFragmentView
     }
@@ -133,7 +133,7 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
 
         val infoViewItem = menu?.findItem(R.id.action_licenses)
         infoViewItem?.setOnMenuItemClickListener {
-            val intent = Intent(context, LicensesActivityView::class.java)
+            val intent = Intent(context, LicensesActivity::class.java)
             startActivity(intent)
             return@setOnMenuItemClickListener true
         }

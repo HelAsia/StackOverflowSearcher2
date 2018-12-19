@@ -10,7 +10,7 @@ import android.webkit.WebViewClient
 import com.example.asia.stackoverflowsearcher.R
 import kotlinx.android.synthetic.main.fragment_details_fragment_view.*
 
-class ResultDetailsFragmentView: Fragment() {
+class ResultDetailsFragment: Fragment() {
     private var fragmentView: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

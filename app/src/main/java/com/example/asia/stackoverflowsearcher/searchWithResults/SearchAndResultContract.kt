@@ -1,9 +1,6 @@
 package com.example.asia.stackoverflowsearcher.searchWithResults
 
 import android.content.Context
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.RecyclerView
-import android.widget.TextView
 import com.example.asia.stackoverflowsearcher.data.model.Item
 
 interface SearchAndResultContract {
@@ -19,7 +16,7 @@ interface SearchAndResultContract {
         fun setSwipeRefreshLayout()
         fun goToDetails(url: String?)
         fun goToFragment(url: String?)
-        fun getFragmentWithArgs(url: String?): ResultDetailsFragmentView
+        fun getFragmentWithArgs(url: String?): ResultDetailsFragment
     }
 
     interface Presenter{

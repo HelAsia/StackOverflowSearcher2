@@ -13,7 +13,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.one_result_card.view.*
 
 class ResultCardsAdapter(private val itemList: List<Item?>?,
-                         private val clickListener: (Item) -> Unit): RecyclerView.Adapter<ResultCardsAdapter.ViewHolder>() {
+                         private val clickListener: (Item) -> Unit):
+    RecyclerView.Adapter<ResultCardsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ResultCardsAdapter.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

@@ -37,12 +37,12 @@ class QueryRepository : QueryRepositoryInterface {
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    queryResult -> if (queryResult.errorId == null)  listener?.onSuccess(queryResult.items)
+                    queryResult -> if (queryResult.errorId == null)  listener.onSuccess(queryResult.items)
                             else listener.onError(queryResult.errorMessage)
                     Log.i("onResponse(): ", "$queryResult")
                 },
                 {
-                    error: Throwable -> listener?.onError(error.message)
+                    error: Throwable -> listener.onError(error.message)
                     Log.i("onResponse(). error: ", "$error")
                 }
 

@@ -5,9 +5,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.example.asia.stackoverflowsearcher.R
-import com.example.asia.stackoverflowsearcher.searchWithResults.SearchAndResultActivityView
+import com.example.asia.stackoverflowsearcher.searchWithResults.SearchAndResultActivity
 
-class WelcomeActivityView : AppCompatActivity() {
+class WelcomeActivity : AppCompatActivity() {
     private val splashDisplayLength: Long = 1500
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +15,7 @@ class WelcomeActivityView : AppCompatActivity() {
         setContentView(R.layout.activity_welcome_view)
 
         Handler().postDelayed({
-            val intent = Intent(this, SearchAndResultActivityView::class.java)
+            val intent = Intent(this, SearchAndResultActivity::class.java)
             startActivity(intent)
             finish()
         }, splashDisplayLength)
