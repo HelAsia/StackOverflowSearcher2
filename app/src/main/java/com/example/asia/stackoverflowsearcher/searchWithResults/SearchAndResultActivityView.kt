@@ -56,7 +56,7 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
     }
 
     override fun setLinearLayoutForRecyclerView(itemList: List<Item?>?) {
-        val adapterCards = ResultCardsAdapter(itemList, {item: Item -> cardsClicked(item) })
+        val adapterCards = ResultCardsAdapter(itemList) { item: Item -> cardsClicked(item) }
         items_recycler_view.adapter = adapterCards
         linearLayoutManager = LinearLayoutManager(this)
         items_recycler_view.layoutManager = linearLayoutManager
