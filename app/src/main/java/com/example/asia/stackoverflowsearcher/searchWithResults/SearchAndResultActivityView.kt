@@ -1,4 +1,4 @@
-package com.example.asia.stackoverflowsearcher.search_with_results
+package com.example.asia.stackoverflowsearcher.searchWithResults
 
 import android.content.Context
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.example.asia.stackoverflowsearcher.search_with_results
+package com.example.asia.stackoverflowsearcher.searchWithResults
 
 import android.os.Build
 import android.support.annotation.RequiresApi

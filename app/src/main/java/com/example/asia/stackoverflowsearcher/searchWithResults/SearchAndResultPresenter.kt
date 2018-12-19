@@ -1,4 +1,4 @@
-package com.example.asia.stackoverflowsearcher.search_with_results
+package com.example.asia.stackoverflowsearcher.searchWithResults
 
 import android.content.res.Configuration
 import android.preference.PreferenceManager
@@ -100,6 +100,7 @@ class SearchAndResultPresenter(private val searchView: SearchAndResultContract.V
             setRecyclerView(itemList)
             searchView.getErrorMessageTextView().visibility = View.GONE
             searchView.getSwipeRefreshLayout().isRefreshing = false
+
         }
     }
 
