@@ -1,24 +1,27 @@
 package com.example.asia.stackoverflowsearcher.searchWithResults
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.View
 import android.widget.SearchView
-import android.widget.TextView
 import com.example.asia.stackoverflowsearcher.R
 import com.example.asia.stackoverflowsearcher.data.model.Item
 import com.example.asia.stackoverflowsearcher.data.repositories.QueryRepository
 import com.example.asia.stackoverflowsearcher.details.WebViewActivity
 import com.example.asia.stackoverflowsearcher.licenses.LicensesActivityView
-import com.example.asia.stackoverflowsearcher.welcome.WelcomeActivityView
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_search_and_result_view.*
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract.View,
     ResultCardsAdapter.OnShareWebViewDetailsListener{
@@ -119,6 +122,7 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
         return resultDetailsFragmentView
     }
 
+    @SuppressLint("CheckResult")
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.search_menu, menu)
@@ -138,19 +142,30 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
 
         val searchViewItem = menu?.findItem(R.id.action_search)
         val searchViewAndroidActionBar = searchViewItem?.actionView as android.support.v7.widget.SearchView
-        searchViewAndroidActionBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
-            android.support.v7.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(title: String?): Boolean {
+        Observable.create(ObservableOnSubscribe<String> { subscriber ->
+            searchViewAndroidActionBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+                android.support.v7.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(title: String): Boolean {
+                    presenter?.saveLastQueryInPreferences(title)
+                    presenter?.getItemsFromServer(title)
+                    searchViewAndroidActionBar.clearFocus()
+                    return true
+                }
+
+                override fun onQueryTextChange(p0: String): Boolean{
+                    if (p0.length > 2){
+                        subscriber.onNext(p0)
+                    }
+                    return false
+                }
+            })
+        }).debounce(1000, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { title ->
                 presenter?.saveLastQueryInPreferences(title)
                 presenter?.getItemsFromServer(title)
-                searchViewAndroidActionBar.clearFocus()
-                return true
             }
 
-            override fun onQueryTextChange(p0: String?): Boolean {
-                return false
-            }
-        })
         return super.onCreateOptionsMenu(menu)
     }
 
