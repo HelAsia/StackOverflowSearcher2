@@ -20,11 +20,10 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_search_and_result_view.*
-import java.util.*
+
 import java.util.concurrent.TimeUnit
 
-class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract.View,
-    ResultCardsAdapter.OnShareWebViewDetailsListener{
+class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract.View{
     private val presenter: SearchAndResultContract.Presenter? =
         SearchAndResultPresenter(this, QueryRepository())
     private var context: Context? = null
@@ -57,11 +56,10 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
     }
 
     override fun setLinearLayoutForRecyclerView(itemList: List<Item?>?) {
-        val adapterCards = ResultCardsAdapter(itemList)
+        val adapterCards = ResultCardsAdapter(itemList, {item: Item -> cardsClicked(item) })
         items_recycler_view.adapter = adapterCards
         linearLayoutManager = LinearLayoutManager(this)
         items_recycler_view.layoutManager = linearLayoutManager
-        adapterCards.setCallbackWebViewOnShareClickedListener(this)
     }
 
     override fun setSwipeRefreshLayoutEnabledStatus() {
@@ -142,6 +140,7 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
 
         val searchViewItem = menu?.findItem(R.id.action_search)
         val searchViewAndroidActionBar = searchViewItem?.actionView as android.support.v7.widget.SearchView
+
         Observable.create(ObservableOnSubscribe<String> { subscriber ->
             searchViewAndroidActionBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
                 android.support.v7.widget.SearchView.OnQueryTextListener {
@@ -169,11 +168,11 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun shareCardClicked(url: String?) {
-    if(context?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT){
-            goToDetails(url)
+    private fun cardsClicked(item: Item) {
+        if(context?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT){
+            goToDetails(item.link)
         }else{
-            goToFragment(url)
+            goToFragment(item.link)
         }
     }
 }

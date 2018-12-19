@@ -12,16 +12,8 @@ import com.example.asia.stackoverflowsearcher.data.model.Item
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.one_result_card.view.*
 
-class ResultCardsAdapter(var itemList: List<Item?>?): RecyclerView.Adapter<ResultCardsAdapter.ViewHolder>() {
-    private var callbackWebView: OnShareWebViewDetailsListener? = null
-
-    fun setCallbackWebViewOnShareClickedListener(callbackWebView: OnShareWebViewDetailsListener){
-        this.callbackWebView = callbackWebView
-    }
-
-    interface OnShareWebViewDetailsListener{
-        fun shareCardClicked(url: String?)
-    }
+class ResultCardsAdapter(private val itemList: List<Item?>?,
+                         private val clickListener: (Item) -> Unit): RecyclerView.Adapter<ResultCardsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): ResultCardsAdapter.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -30,12 +22,7 @@ class ResultCardsAdapter(var itemList: List<Item?>?): RecyclerView.Adapter<Resul
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.bind(itemList?.get(position)!!)
-
-        viewHolder.itemView.one_result_card_layout.setOnClickListener {
-            val url = itemList?.get(position)!!.link
-            callbackWebView?.shareCardClicked(url)
-        }
+        viewHolder.bind(itemList!![position], clickListener)
     }
 
     override fun getItemCount(): Int {
@@ -63,16 +50,14 @@ class ResultCardsAdapter(var itemList: List<Item?>?): RecyclerView.Adapter<Resul
     }
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        fun bind(item: Item){
-            val titleQuery = item.title
-            val userName= item.owner?.displayName
-            val avatarUrl = item.owner?.profileImage
-            val answerCount = item.answerCount
-
-            itemView.title.text = titleQuery
-            itemView.user_name.text = userName
-            Picasso.get().load(avatarUrl).into(itemView.avatar)
-            itemView.answer_count.text = answerCount.toString()
+        fun bind(item: Item?, clickListener: (Item) -> Unit){
+            itemView.title.text = item?.title
+            itemView.user_name.text = item?.owner?.displayName
+            Picasso.get().load(item?.owner?.profileImage).into(itemView.avatar)
+            itemView.answer_count.text = item?.answerCount.toString()
+            if(item != null){
+                itemView.setOnClickListener{ clickListener(item)}
+            }
         }
     }
 }

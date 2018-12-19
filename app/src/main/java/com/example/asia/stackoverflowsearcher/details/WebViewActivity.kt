@@ -12,15 +12,18 @@ import com.example.asia.stackoverflowsearcher.searchWithResults.SearchAndResultA
 import kotlinx.android.synthetic.main.activity_web_view.*
 
 class WebViewActivity : AppCompatActivity() {
-    private var context: Context? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
 
-        context = applicationContext
-
         setToolbar()
         setWebView(getUrl())
+    }
+
+    override fun onBackPressed(){
+        val intent = Intent(this, SearchAndResultActivityView::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun getUrl(): String{
