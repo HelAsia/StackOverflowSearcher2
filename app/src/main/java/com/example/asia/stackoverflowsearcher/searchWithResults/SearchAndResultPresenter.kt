@@ -14,15 +14,14 @@ import com.example.asia.stackoverflowsearcher.utils.Constant
 class SearchAndResultPresenter(private val searchView: SearchAndResultContract.View?,
                                private val queryRepository: QueryRepository?):
                 SearchAndResultContract.Presenter,
-                QueryRepositoryInterface.OnQueryResultDisplayListener,
-    ResultCardsAdapter.OnShareWebViewDetailsListener {
-
-    private var linearLayoutManager: LinearLayoutManager? = null
+                QueryRepositoryInterface.OnQueryResultDisplayListener {
 
     override fun setFirstScreen() {
         if (getLastQueryFromPreferences() != ""){
             getItemsFromServer(getLastQueryFromPreferences())
         }
+        searchView?.setToolbar()
+        searchView?.setSwipeRefreshLayout()
     }
 
     override fun getItemsFromServer(title: String?) {
@@ -34,78 +33,14 @@ class SearchAndResultPresenter(private val searchView: SearchAndResultContract.V
             .getString(Constant.PREF_LAST_QUERY, "")
     }
 
-    override fun setRecyclerView(itemList: List<Item?>?) {
-        if (itemList == null){
-            showErrorMessage(searchView?.getContext()?.resources
-                    ?.getString(R.string.empty_list_error))
-        }else{
-            setLinearLayoutForRecyclerView(itemList)
-            setSwipeRefreshLayoutEnabledStatus()
-        }
-    }
-
-    override fun showErrorMessage(errorMessageText: String?) {
-        if (searchView != null){
-            searchView.getErrorMessageTextView().visibility = View.VISIBLE
-            searchView.getErrorMessageTextView().text = errorMessageText
-        }
-    }
-
-    override fun setLinearLayoutForRecyclerView(itemList: List<Item?>?) {
-        if (searchView != null){
-            val adapterCards = ResultCardsAdapter(itemList)
-            searchView.getRecyclerView().adapter = adapterCards
-            linearLayoutManager = LinearLayoutManager(searchView.getContext())
-            searchView.getRecyclerView().layoutManager = linearLayoutManager
-            adapterCards.setCallbackWebViewOnShareClickedListener(this)
-        }
-    }
-
-    override fun setSwipeRefreshLayoutEnabledStatus() {
-        if (searchView != null && linearLayoutManager != null){
-            searchView.getRecyclerView().addOnScrollListener(object : RecyclerView.OnScrollListener(){
-                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    searchView.getSwipeRefreshLayout().isEnabled =
-                            linearLayoutManager!!.findFirstVisibleItemPosition() == 0
-                }
-            })
-
-        }
-    }
-
-    override fun setSwipeRefreshLayout() {
-        searchView?.getSwipeRefreshLayout()?.setOnRefreshListener{
-            getItemsFromServer(getLastQueryFromPreferences())
-        }
-
-        searchView?.getSwipeRefreshLayout()?.setColorSchemeResources(R.color.primary,
-            android.R.color.holo_green_dark,
-            android.R.color.holo_orange_dark,
-            android.R.color.holo_blue_dark)
-    }
-
-    override fun shareCardClicked(url: String?) {
-        if (searchView != null){
-            if (searchView.getContext()?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT){
-                searchView.goToDetails(url)
-            }else{
-                searchView.goToFragment(url)
-            }
-        }
-    }
-
     override fun onSuccess(itemList: List<Item>?) {
-        if (searchView!= null){
-            setRecyclerView(itemList)
-            searchView.getErrorMessageTextView().visibility = View.GONE
-            searchView.getSwipeRefreshLayout().isRefreshing = false
-
-        }
+            searchView?.setRecyclerView(itemList)
+            searchView?.setGoneErrorMessageTextView()
+            searchView?.setFinishRefreshingSwipeRefresh()
     }
 
     override fun onError(errorMessageText: String?) {
-        showErrorMessage(errorMessageText)
+        searchView?.setVisibleErrorMessageTextView(errorMessageText)
     }
 
     override fun saveLastQueryInPreferences(title: String?) {

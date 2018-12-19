@@ -10,7 +10,7 @@ import com.example.asia.stackoverflowsearcher.R
 import kotlinx.android.synthetic.main.fragment_details_fragment_view.*
 
 class ResultDetailsFragmentView: Fragment() {
-    var fragmentView: View? = null
+    private var fragmentView: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_details_fragment_view, container, false)
@@ -18,7 +18,6 @@ class ResultDetailsFragmentView: Fragment() {
         setWebView(getUrl())
         return view
     }
-
 
     override fun getView(): View? {
         return fragmentView
@@ -29,11 +28,7 @@ class ResultDetailsFragmentView: Fragment() {
     }
 
     private fun getUrl(): String? {
-        return try {
-            arguments!!.getString("url")
-        } catch (e: NullPointerException) {
-            "https://stackoverflow.com/"
-        }
+        return arguments?.getString("url") ?: "https://stackoverflow.com/"
     }
 
     private fun setWebView(url: String?){

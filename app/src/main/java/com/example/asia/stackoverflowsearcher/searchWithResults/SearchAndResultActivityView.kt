@@ -2,32 +2,37 @@ package com.example.asia.stackoverflowsearcher.searchWithResults
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
+import android.view.View
 import android.widget.SearchView
 import android.widget.TextView
 import com.example.asia.stackoverflowsearcher.R
+import com.example.asia.stackoverflowsearcher.data.model.Item
 import com.example.asia.stackoverflowsearcher.data.repositories.QueryRepository
+import com.example.asia.stackoverflowsearcher.details.WebViewActivity
 import com.example.asia.stackoverflowsearcher.licenses.LicensesActivityView
 import com.example.asia.stackoverflowsearcher.welcome.WelcomeActivityView
 import kotlinx.android.synthetic.main.activity_search_and_result_view.*
 
-class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract.View {
+class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract.View,
+    ResultCardsAdapter.OnShareWebViewDetailsListener{
     private val presenter: SearchAndResultContract.Presenter? =
         SearchAndResultPresenter(this, QueryRepository())
     private var context: Context? = null
+    private var linearLayoutManager: LinearLayoutManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_and_result_view)
         context = applicationContext
 
-        setToolbar()
         presenter?.setFirstScreen()
-        presenter?.setSwipeRefreshLayout()
     }
 
     override fun getContext(): Context? {
@@ -39,20 +44,61 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
         setSupportActionBar(toolbar_activity_search_view)
     }
 
-    override fun getRecyclerView(): RecyclerView {
-        return items_recycler_view
+    override fun setRecyclerView(itemList: List<Item?>?) {
+        if (itemList == null){
+            setVisibleErrorMessageTextView("You do not have cards to show!")
+        }else{
+            setLinearLayoutForRecyclerView(itemList)
+            setSwipeRefreshLayoutEnabledStatus()
+        }
     }
 
-    override fun getErrorMessageTextView(): TextView {
-        return error_message
+    override fun setLinearLayoutForRecyclerView(itemList: List<Item?>?) {
+        val adapterCards = ResultCardsAdapter(itemList)
+        items_recycler_view.adapter = adapterCards
+        linearLayoutManager = LinearLayoutManager(this)
+        items_recycler_view.layoutManager = linearLayoutManager
+        adapterCards.setCallbackWebViewOnShareClickedListener(this)
     }
 
-    override fun getSwipeRefreshLayout(): SwipeRefreshLayout {
-        return swipe_refresh_layout
+    override fun setSwipeRefreshLayoutEnabledStatus() {
+        if (linearLayoutManager != null){
+            items_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    swipe_refresh_layout.isEnabled =
+                            linearLayoutManager!!.findFirstVisibleItemPosition() == 0
+                }
+            })
+        }
+    }
+
+    override fun setSwipeRefreshLayout() {
+        swipe_refresh_layout.setOnRefreshListener{
+            presenter?.getItemsFromServer(presenter.getLastQueryFromPreferences())
+        }
+
+        swipe_refresh_layout?.setColorSchemeResources(R.color.primary,
+            android.R.color.holo_green_dark,
+            android.R.color.holo_orange_dark,
+            android.R.color.holo_blue_dark)
+    }
+
+    override fun setVisibleErrorMessageTextView(errorMessageText: String?) {
+        error_message.visibility = View.VISIBLE
+        error_message.text = errorMessageText
+    }
+
+    override fun setGoneErrorMessageTextView() {
+        error_message.visibility = View.GONE
+    }
+
+    override fun setFinishRefreshingSwipeRefresh() {
+        swipe_refresh_layout.isRefreshing = false
     }
 
     override fun goToDetails(url: String?) {
-        val intent = Intent(context, WelcomeActivityView::class.java)
+        val intent = Intent(context, WebViewActivity::class.java)
         intent.putExtra("url", url)
         startActivity(intent)
         finish()
@@ -106,5 +152,13 @@ class SearchAndResultActivityView : AppCompatActivity(), SearchAndResultContract
             }
         })
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun shareCardClicked(url: String?) {
+    if(context?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT){
+            goToDetails(url)
+        }else{
+            goToFragment(url)
+        }
     }
 }

@@ -10,9 +10,13 @@ interface SearchAndResultContract {
     interface View{
         fun getContext(): Context?
         fun setToolbar()
-        fun getRecyclerView(): RecyclerView
-        fun getErrorMessageTextView(): TextView
-        fun getSwipeRefreshLayout(): SwipeRefreshLayout
+        fun setVisibleErrorMessageTextView(errorMessageText: String?)
+        fun setGoneErrorMessageTextView()
+        fun setFinishRefreshingSwipeRefresh()
+        fun setRecyclerView(itemList: List<Item?>?)
+        fun setLinearLayoutForRecyclerView(itemList: List<Item?>?)
+        fun setSwipeRefreshLayoutEnabledStatus()
+        fun setSwipeRefreshLayout()
         fun goToDetails(url: String?)
         fun goToFragment(url: String?)
         fun getFragmentWithArgs(url: String?): ResultDetailsFragmentView
@@ -22,11 +26,6 @@ interface SearchAndResultContract {
         fun setFirstScreen()
         fun getItemsFromServer(title: String?)
         fun getLastQueryFromPreferences(): String?
-        fun setRecyclerView(itemList: List<Item?>?)
-        fun showErrorMessage(errorMessageText: String?)
-        fun setLinearLayoutForRecyclerView(itemList: List<Item?>?)
-        fun setSwipeRefreshLayoutEnabledStatus()
-        fun setSwipeRefreshLayout()
         fun saveLastQueryInPreferences(title: String?)
     }
 }

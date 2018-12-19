@@ -31,41 +31,22 @@ class QueryRepository : QueryRepositoryInterface {
         this.searchAPI = retrofit?.create(SearchAPI::class.java)
     }
 
-    override fun getQueryResult(title: String?, listener: QueryRepositoryInterface.OnQueryResultDisplayListener?) {
+    override fun getQueryResult(title: String?, listener: QueryRepositoryInterface.OnQueryResultDisplayListener) {
         searchAPI?.getQueryResult(title)
             ?.subscribeOn(Schedulers.newThread())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    items -> if (items.errorId == null)  listener?.onSuccess(items.items)
-                            else listener?.onError(items.errorMessage)
+                    queryResult -> if (queryResult.errorId == null)  listener?.onSuccess(queryResult.items)
+                            else listener.onError(queryResult.errorMessage)
+                    Log.i("onResponse(): ", "$queryResult")
                 },
                 {
-                    error:Throwable -> listener?.onError(error.message)
+                    error: Throwable -> listener?.onError(error.message)
+                    Log.i("onResponse(). error: ", "$error")
                 }
 
             )
-
-
-/*      val resp: Call<QueryResult>? = searchAPI?.getQueryResult(title)
-       resp?.enqueue(object : Callback<QueryResult> {
-           override fun onResponse(call: Call<QueryResult>, response: Response<QueryResult>) {
-               val queryResult: QueryResult? = response.body()
-               if (queryResult?.errorId == null){
-                   Log.i("onResponse(): ", "$queryResult")
-                   listener?.onSuccess(queryResult?.items)
-               }else{
-                   Log.i("onResponse(). error: ", "$queryResult")
-                   listener?.onError(queryResult.errorMessage)
-               }
-           }
-
-           override fun onFailure(call: Call<QueryResult>, t: Throwable) {
-               Log.i("onFailure(): Server ", t.message)
-               listener?.onError(t.message)
-           }
-       })*/
-
 
    }
 }
