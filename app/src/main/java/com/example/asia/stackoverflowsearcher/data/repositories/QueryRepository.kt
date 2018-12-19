@@ -17,17 +17,9 @@ import retrofit2.Retrofit
 class QueryRepository : QueryRepositoryInterface {
     private var retrofit: Retrofit? = null
     private var searchAPI: SearchAPI? = null
-    private var baseURL: String
 
-    constructor(){
-        this.baseURL = Constant.BASE_URL
-        this.retrofit = RetrofitSingleton.getInstance(this.baseURL).getRetrofit()
-        this.searchAPI = retrofit?.create(SearchAPI::class.java)
-    }
-
-    constructor(url: String){
-        this.baseURL = url
-        this.retrofit = RetrofitSingleton.getInstance(this.baseURL).getRetrofit()
+    init {
+        this.retrofit = RetrofitSingleton.createRetrofitInstance()
         this.searchAPI = retrofit?.create(SearchAPI::class.java)
     }
 
