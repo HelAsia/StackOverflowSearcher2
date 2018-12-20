@@ -24,8 +24,8 @@ class QueryRepository : QueryRepositoryInterface {
     }
 
     override fun getQueryResult(title: String?, listener: QueryRepositoryInterface.OnQueryResultDisplayListener) {
-        searchAPI?.getQueryResult(title)
-            ?.subscribeOn(Schedulers.newThread())
+        val disposable = searchAPI?.getQueryResult(title)
+            ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
@@ -37,8 +37,6 @@ class QueryRepository : QueryRepositoryInterface {
                     error: Throwable -> listener.onError(error.message)
                     Log.i("onResponse(). error: ", "$error")
                 }
-
             )
-
    }
 }
