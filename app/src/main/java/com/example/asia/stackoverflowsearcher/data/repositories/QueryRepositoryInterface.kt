@@ -8,5 +8,5 @@ interface QueryRepositoryInterface {
         fun onError(errorMessageText: String?)
     }
 
-    fun getQueryResult(title: String?, listener: OnQueryResultDisplayListener?)
+    fun getQueryResult(title: String?, listener: OnQueryResultDisplayListener)
 }
